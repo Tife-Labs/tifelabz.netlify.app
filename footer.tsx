@@ -138,7 +138,7 @@ export function Footer() {
             © {currentYear} TifeLabs. All rights reserved. | Built using Next.js
           </p>
           <p className="flex items-center gap-1">
-            Made with <Heart className="h-3 w-3 text-red-500" aria-hidden="true" /> in Nigeria
+            Made in Nigeria
           </p>
         </div>
       </div>
