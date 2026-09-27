@@ -57,21 +57,24 @@ export default function ContactPage() {
     setLoading(true);
     setError(null);
 
-    const formspreeId = process.env.NEXT_PUBLIC_FORMSPREE_ID;
-
-    if (!formspreeId) {
-      setError("Form endpoint is not configured.");
-      setLoading(false);
-      return;
-    }
-
     try {
-      const response = await fetch(`https://formspree.io/f/${formspreeId}`, {
+      const body = new URLSearchParams({
+        "form-name": "contact",
+        name: data.name,
+        email: data.email,
+        company: data.company ?? "",
+        service: data.service,
+        message: data.message,
+      });
+
+      // Posts to a static skeleton page (not "/") so Netlify's form-processing
+      // middleware handles it instead of the Next.js SSR route.
+      const response = await fetch("/__forms.html", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "application/x-www-form-urlencoded",
         },
-        body: JSON.stringify(data),
+        body: body.toString(),
       });
 
       if (response.ok) {
@@ -155,7 +158,18 @@ export default function ContactPage() {
 
           {/* Contact Form */}
           <div className="md:col-span-2">
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" noValidate>
+            <form
+              name="contact"
+              onSubmit={handleSubmit(onSubmit)}
+              className="space-y-6"
+              noValidate
+            >
+              <input type="hidden" name="form-name" value="contact" />
+              <p className="hidden">
+                <label>
+                  Don&apos;t fill this out: <input name="bot-field" />
+                </label>
+              </p>
               <div className="grid gap-6 sm:grid-cols-2">
                 <div>
                   <label htmlFor="contact-name" className="mb-2 block text-sm font-medium">
